@@ -43,14 +43,14 @@ defmodule SwarmBots.Demo.Bot do
 
   # ROTATION FUNCTIONS
   def rotate_bot(%__MODULE__{rotation: rotation} = bot, degrees),
-    do: %{bot | rotation: (rotation + degrees) |> check_rotation()}
+    do: %{bot | rotation: (rotation + degrees) |> normalize_rotation()}
 
   # PRIVATES
   defp random_start_position(), do: {:position, {0..10 |> Enum.random(), 0..10 |> Enum.random()}}
   defp random_rotation(), do: {:rotation, @rotations |> Enum.random()}
 
-  defp check_rotation(rotation) when rotation >= 360, do: rotation - 360
-  defp check_rotation(rotation) when rotation < 0, do: rotation + 360
+  defp normalize_rotation(rotation) when rotation >= 360, do: rotation - 360
+  defp normalize_rotation(rotation) when rotation < 0, do: rotation + 360
 
   defp scan_boundaries({x, _y}) when x < 0 or x > 720, do: false
   defp scan_boundaries({_x, y}) when y < 0 or y > 480, do: false
