@@ -1,5 +1,6 @@
 defmodule SwarmBots.Demo.Bot do
   @moduledoc """
+  A bot is a circle with a radius of 25px made as following: a radius of 22px for the core and a border of 3px.
   A bot has an X/Y tuple property for position: X axis means horizontally from the game board perspective, Y axis means vertically.
 
   A bot can rotates in 8 differents degrees:
@@ -14,7 +15,7 @@ defmodule SwarmBots.Demo.Bot do
   def new_bot(options \\ []), do: __struct__(options)
 
   def scan_collisions(%__MODULE__{position: position} = _bot, arena),
-    do: position |> scan_boundaries() && !(position |> scan_bots(arena))
+    do: position |> scan_boundaries() || !(position |> scan_bots(arena))
 
   # SHIFT FUNCTIONS
   def move_bot(%__MODULE__{rotation: 0, position: {x, y}} = bot),
@@ -46,14 +47,18 @@ defmodule SwarmBots.Demo.Bot do
     do: %{bot | rotation: (rotation + degrees) |> normalize_rotation()}
 
   # PRIVATES
-  defp random_start_position(), do: {:position, {0..10 |> Enum.random(), 0..10 |> Enum.random()}}
+  defp random_start_position(),
+    do: {:position, {25..695 |> Enum.random(), 25..455 |> Enum.random()}}
+
   defp random_rotation(), do: {:rotation, @rotations |> Enum.random()}
 
   defp normalize_rotation(rotation) when rotation >= 360, do: rotation - 360
   defp normalize_rotation(rotation) when rotation < 0, do: rotation + 360
+  defp normalize_rotation(accepted_rotation), do: accepted_rotation
 
-  defp scan_boundaries({x, _y}) when x < 0 or x > 720, do: false
-  defp scan_boundaries({_x, y}) when y < 0 or y > 480, do: false
+  defp scan_boundaries({x, _y}) when x < 25 or x > 695, do: true
+  defp scan_boundaries({_x, y}) when y < 25 or y > 455, do: true
+  defp scan_boundaries(_safe_position), do: false
 
-  defp scan_bots({x, y}, arena), do: !!arena[{x, y}]
+  defp scan_bots({x, y}, arena), do: !arena[{x, y}]
 end
