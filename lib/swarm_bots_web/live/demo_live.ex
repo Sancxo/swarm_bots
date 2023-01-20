@@ -24,35 +24,23 @@ defmodule SwarmBotsWeb.DemoLive do
   defp render_bots(assigns) do
     ~H"""
     <%= for {{x, y}, bot} <- @game.arena do %>
-      <circle cx={x} cy={y} r="22" stroke="black" stroke-width="3" fill="gray" />
-      <%= bot |> render_led() %>
+      <g transform={"rotate(#{bot.rotation} #{x} #{y})"}>
+        <%= bot |> render_core() %>
+        <%= bot |> render_led() %>
+      </g>
     <% end %>
     """
   end
 
-  defp render_led(%Bot{position: {x, y}, rotation: 0}), do: render_led(%{x: x, y: y + 10})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 45}), do: render_led(%{x: x - 7.5, y: y + 7.5})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 90}), do: render_led(%{x: x - 10, y: y})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 135}),
-    do: render_led(%{x: x - 7.5, y: y - 7.5})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 180}), do: render_led(%{x: x, y: y - 10})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 225}),
-    do: render_led(%{x: x + 7.5, y: y - 7.5})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 270}),
-    do: render_led(%{x: x + 10, y: y})
-
-  defp render_led(%Bot{position: {x, y}, rotation: 315}),
-    do: render_led(%{x: x + 7.5, y: y + 7.5})
-
-  defp render_led(%{x: x, y: y} = assigns) do
+  defp render_core(%Bot{position: {x, y}} = assigns) do
     ~H"""
-    <circle cx={x} cy={y} r="2" fill="chartreuse">
+    <circle cx={x} cy={y} r="22" stroke="black" stroke-width="3" fill="gray" />
+    """
+  end
+
+  defp render_led(%Bot{position: {x, y}} = assigns) do
+    ~H"""
+    <circle cx={x} cy={y + 10} r="2" fill="chartreuse" >
       <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" />
     </circle>
     """
