@@ -14,8 +14,8 @@ defmodule SwarmBots.Demo.Bot do
   def new_random_bot(), do: new_bot([random_start_position(), random_rotation()])
   def new_bot(options \\ []), do: __struct__(options)
 
-  def scan_collisions(%__MODULE__{position: position} = _bot, arena),
-    do: position |> scan_boundaries() || !(position |> scan_bots(arena))
+  def scan_collisions(%__MODULE__{position: position} = _bot, old_bot_position, arena),
+    do: position |> scan_boundaries() || position |> scan_bots(old_bot_position, arena)
 
   # SHIFT FUNCTIONS
   def move_bot(%__MODULE__{rotation: 0, position: {x, y}} = bot),
@@ -60,5 +60,16 @@ defmodule SwarmBots.Demo.Bot do
   defp scan_boundaries({_x, y}) when y < 25 or y > 455, do: true
   defp scan_boundaries(_safe_position), do: false
 
-  defp scan_bots({x, y}, arena), do: !arena[{x, y}]
+  # algo found at https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection#circle_collision
+  defp scan_bots({x, y}, old_bot_position, arena) do
+    arena
+    |> Map.delete(old_bot_position)
+    |> Map.keys()
+    |> Enum.any?(fn {other_bot_x, other_bot_y} ->
+      dx = x - other_bot_x
+      dy = y - other_bot_y
+
+      :math.sqrt(dx * dx + dy * dy) < 50
+    end)
+  end
 end

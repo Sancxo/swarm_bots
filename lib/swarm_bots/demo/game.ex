@@ -12,7 +12,7 @@ defmodule SwarmBots.Demo.Game do
         new = bot |> Bot.move_bot()
 
         new
-        |> Bot.scan_collisions(arena)
+        |> Bot.scan_collisions(bot_position, arena)
         |> case do
           false ->
             acc |> Map.put(new.position, new)
