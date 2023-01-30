@@ -61,6 +61,8 @@ defmodule SwarmBots.Demo.Bot do
   defp scan_boundaries(_safe_position), do: false
 
   # algo found at https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection#circle_collision
+  # Need for optimization (broad and narrow collision) to avoid calculating the positions of all the bots for each bot
+  # (just check the nearest bots for each bot)
   defp scan_bots({x, y}, old_bot_position, arena) do
     arena
     |> Map.delete(old_bot_position)
