@@ -2,7 +2,8 @@ defmodule SwarmBots.Demo.Game do
   alias SwarmBots.Demo.Bot
   defstruct [:target, :swarm, arena: %{}, game_over: false]
 
-  def new_game(), do: __struct__() |> generate_bot()
+  def new_game(number_of_bots),
+    do: __struct__() |> generate_bots(number_of_bots)
 
   def move_bots(%__MODULE__{arena: arena} = game) do
     new_arena =
@@ -25,6 +26,13 @@ defmodule SwarmBots.Demo.Game do
       end)
 
     %{game | arena: new_arena}
+  end
+
+  defp generate_bots(game, number_of_bots) do
+    1..number_of_bots
+    |> Enum.reduce(game, fn _, acc ->
+      acc |> generate_bot()
+    end)
   end
 
   defp generate_bot(game) do

@@ -3,9 +3,11 @@ defmodule SwarmBotsWeb.DemoLive do
   use Phoenix.HTML
   alias SwarmBots.Demo.{Game, Bot}
 
+  @number_of_bots 5
+
   def mount(_params, _session, socket) do
-    if connected?(socket), do: :timer.send_interval(12, :tick)
-    {:ok, socket |> assign(game: Game.new_game())}
+    if connected?(socket), do: :timer.send_interval(9, :tick)
+    {:ok, socket |> assign(game: Game.new_game(@number_of_bots))}
   end
 
   def handle_info(:tick, %{assigns: %{game: game}} = socket),
